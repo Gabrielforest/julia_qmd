@@ -1,2 +1,2 @@
 # julia_qmd
-Using Julia with Quarto package
+Quarto package files written in Julia.
