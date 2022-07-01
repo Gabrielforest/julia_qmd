@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.449">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Artificial Neural Networks - Digit Recogniser</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<script src="ann_backpropagation_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ann_backpropagation_files/libs/quarto-html/quarto.js"></script>
+<script src="ann_backpropagation_files/libs/quarto-html/popper.min.js"></script>
+<script src="ann_backpropagation_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ann_backpropagation_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ann_backpropagation_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link id="quarto-text-highlighting-styles" href="ann_backpropagation_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet">
+<script src="ann_backpropagation_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ann_backpropagation_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ann_backpropagation_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Artificial Neural Networks - Digit Recogniser</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<section id="loading-packages-and-data" class="level2">
+<h2 class="anchored" data-anchor-id="loading-packages-and-data">Loading packages and data</h2>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Flux</span>, <span class="bu">Plots</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Flux</span>: crossentropy, onecold, onehotbatch, train!, params</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">LinearAlgebra</span>, <span class="bu">Random</span>, <span class="bu">Statistics</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CSV</span>, <span class="bu">DataFrames</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>test <span class="op">=</span> CSV.<span class="fu">read</span>( <span class="st">"test.csv"</span>, DataFrame )</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>train <span class="op">=</span> CSV.<span class="fu">read</span>( <span class="st">"train.csv"</span>, DataFrame )</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#set a seed</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>( <span class="fl">10</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>TaskLocalRNG()</code></pre>
+</div>
+</div>
+</section>
+<section id="exploring" class="level2">
+<h2 class="anchored" data-anchor-id="exploring">Exploring</h2>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># length </span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">size</span>( train ), <span class="fu">size</span>( test )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>((42000, 785), (28000, 784))</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#head of the data</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">first</span>( train, <span class="fl">5</span> ), <span class="fu">first</span>( test, <span class="fl">5</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div class="ansi-escaped-output">
+<pre>(<span class="ansi-bold">5×785 DataFrame</span>
+<span class="ansi-bold"> Row </span>│<span class="ansi-bold"> label </span><span class="ansi-bold"> pixel0 </span><span class="ansi-bold"> pixel1 </span><span class="ansi-bold"> pixel2 </span><span class="ansi-bold"> pixel3 </span><span class="ansi-bold"> pixel4 </span><span class="ansi-bold"> pixel5 </span><span class="ansi-bold"> pixel6 </span><span class="ansi-bold"> pixel7 </span><span class="ansi-bold"> </span> ⋯
+<span class="ansi-bold">     </span>│<span class="ansi-bright-black-fg"> Int64 </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> </span> ⋯
+─────┼──────────────────────────────────────────────────────────────────────────
+   1 │     1       0       0       0       0       0       0       0       0   ⋯
+   2 │     0       0       0       0       0       0       0       0       0
+   3 │     1       0       0       0       0       0       0       0       0
+   4 │     4       0       0       0       0       0       0       0       0
+   5 │     0       0       0       0       0       0       0       0       0   ⋯
+<span class="ansi-cyan-fg">                                                             776 columns omitted</span>, <span class="ansi-bold">5×784 DataFrame</span>
+<span class="ansi-bold"> Row </span>│<span class="ansi-bold"> pixel0 </span><span class="ansi-bold"> pixel1 </span><span class="ansi-bold"> pixel2 </span><span class="ansi-bold"> pixel3 </span><span class="ansi-bold"> pixel4 </span><span class="ansi-bold"> pixel5 </span><span class="ansi-bold"> pixel6 </span><span class="ansi-bold"> pixel7 </span><span class="ansi-bold"> pixel8 </span> ⋯
+<span class="ansi-bold">     </span>│<span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span><span class="ansi-bright-black-fg"> Int64  </span> ⋯
+─────┼──────────────────────────────────────────────────────────────────────────
+   1 │      0       0       0       0       0       0       0       0       0  ⋯
+   2 │      0       0       0       0       0       0       0       0       0
+   3 │      0       0       0       0       0       0       0       0       0
+   4 │      0       0       0       0       0       0       0       0       0
+   5 │      0       0       0       0       0       0       0       0       0  ⋯
+<span class="ansi-cyan-fg">                                                             775 columns omitted</span>)</pre>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># possible digits</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>( train.label )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>10-element Vector{Int64}:
+ 1
+ 0
+ 4
+ 7
+ 3
+ 5
+ 8
+ 9
+ 2
+ 6</code></pre>
+</div>
+</div>
+<p>view training label image</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> train[ <span class="fl">4</span>, <span class="fl">2</span><span class="op">:</span><span class="kw">end</span> ] <span class="op">|&gt;</span> <span class="dt">Array</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># divided by 255 because there are integers in this range: 0 - 255</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> img <span class="op">/</span> <span class="fl">255</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> <span class="fu">reshape</span>( img, <span class="fl">28</span>, <span class="fl">28</span> )</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># transpose to see the img vertically</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">Gray</span>.( img<span class="op">'</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<p><img src="ann_backpropagation_files/figure-html/cell-6-output-1.svg" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># it supposed to be</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>train.label[ <span class="fl">4</span> ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>4</code></pre>
+</div>
+</div>
+</section>
+<section id="splitting" class="level2">
+<h2 class="anchored" data-anchor-id="splitting">Splitting</h2>
+<p>train data and validation</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train.label </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>x_train <span class="op">=</span> train[ <span class="op">:</span>, <span class="fl">2</span><span class="op">:</span><span class="kw">end</span> ] <span class="op">|&gt;</span> <span class="dt">Matrix</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>42000×784 Matrix{Int64}:
+ 0  0  0  0  0  0  0  0  0  0  0  0  0  …  0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0  …  0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0  …  0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ ⋮              ⋮              ⋮        ⋱           ⋮              ⋮        
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0  …  0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0  …  0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0  0  0  0  0</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function to split randomly by index </span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">perclass_splits</span>( y, percent )</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    uniq_class <span class="op">=</span> <span class="fu">unique</span>( y )</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    keep_index <span class="op">=</span> [ ]</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> class <span class="kw">in</span> uniq_class</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        class_index <span class="op">=</span> <span class="fu">findall</span>( y <span class="op">.==</span> class )</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        row_index <span class="op">=</span> <span class="fu">randsubseq</span>( class_index, percent )</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">push!</span>( keep_index, row_index<span class="op">...</span> ) </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> keep_index</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>perclass_splits (generic function with 1 method)</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>train_index <span class="op">=</span> <span class="fu">perclass_splits</span>( y_train, <span class="fl">0.85</span> )</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>test_index <span class="op">=</span> <span class="fu">setdiff</span>( <span class="fl">1</span><span class="op">:</span><span class="fu">length</span>( y_train ), train_index )</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">size</span>( train_index ), <span class="fu">size</span>( test_index )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>((35687,), (6313,))</code></pre>
+</div>
+</div>
+<p>split features</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> x_train[ train_index, <span class="op">:</span> ]</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> x_train[ test_index, <span class="op">:</span> ] </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">size</span>( X_train ), <span class="fu">size</span>( X_test )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>((35687, 784), (6313, 784))</code></pre>
+</div>
+</div>
+<p>split y (labels)</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>Y_train <span class="op">=</span> y_train[ train_index ]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>Y_test <span class="op">=</span> y_train[ test_index ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>6313-element Vector{Int64}:
+ 7
+ 8
+ 4
+ 9
+ 4
+ 4
+ 4
+ 2
+ 6
+ 3
+ 0
+ 8
+ 2
+ ⋮
+ 1
+ 4
+ 5
+ 6
+ 8
+ 6
+ 1
+ 0
+ 3
+ 1
+ 2
+ 4</code></pre>
+</div>
+</div>
+<p>one-hot encode labels (ones for position of labels concatenated)</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Y_train <span class="op">=</span> <span class="fu">onehotbatch</span>( Y_train, <span class="fl">0</span><span class="op">:</span><span class="fl">9</span> )</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>Y_test <span class="op">=</span> <span class="fu">onehotbatch</span>( Y_test, <span class="fl">0</span><span class="op">:</span><span class="fl">9</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>10×6313 OneHotMatrix(::Vector{UInt32}) with eltype Bool:
+ ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  1  ⋅  ⋅  …  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  1  ⋅  ⋅  ⋅  ⋅
+ ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅     1  ⋅  ⋅  ⋅  ⋅  ⋅  1  ⋅  ⋅  1  ⋅  ⋅
+ ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  1  ⋅  ⋅  ⋅  ⋅  1     ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  1  ⋅
+ ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  1  ⋅  ⋅  ⋅     ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  1  ⋅  ⋅  ⋅
+ ⋅  ⋅  1  ⋅  1  1  1  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅     ⋅  1  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  1
+ ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  …  ⋅  ⋅  1  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅
+ ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  1  ⋅  ⋅  ⋅  ⋅     ⋅  ⋅  ⋅  1  ⋅  1  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅
+ 1  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅     ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅
+ ⋅  1  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  1  ⋅     ⋅  ⋅  ⋅  ⋅  1  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅
+ ⋅  ⋅  ⋅  1  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅     ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅  ⋅</code></pre>
+</div>
+</div>
+</section>
+<section id="modelling" class="level2">
+<h2 class="anchored" data-anchor-id="modelling">Modelling</h2>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define model architecture</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> <span class="fu">Chain</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Dense</span>( <span class="fl">28</span> <span class="op">*</span> <span class="fl">28</span>, <span class="fl">32</span>, relu ),</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Dense</span>( <span class="fl">32</span>, <span class="fl">10</span> ),</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    softmax</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div class="ansi-escaped-output">
+<pre>Chain(
+  Dense(784 =&gt; 32, relu),               <span class="ansi-bright-black-fg"># 25_120 parameters</span>
+  Dense(32 =&gt; 10),                      <span class="ansi-bright-black-fg"># 330 parameters</span>
+  NNlib.softmax,
+) <span class="ansi-bright-black-fg">                  # Total: 4 arrays, </span>25_450 parameters, 99.664 KiB.</pre>
+</div>
+</div>
+</div>
+<p>define loss function</p>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">loss</span>( x, y ) <span class="op">=</span> <span class="fu">crossentropy</span>( <span class="fu">model</span>( x ), y )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<pre><code>loss (generic function with 1 method)</code></pre>
+</div>
+</div>
+<p>track parameters</p>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ps <span class="op">=</span> <span class="fu">params</span>( model )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>Params([Float32[-0.08072544 -0.014934772 … 0.026155135 0.08368843; -0.006803061 -0.038610667 … 0.07880195 -0.020304315; … ; 0.06621553 0.029484855 … -0.07259053 0.015940607; -0.029216636 0.0101530515 … -0.029337503 0.03803233], Float32[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0  …  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], Float32[-0.22930561 -0.28660136 … -0.065767266 0.0068868985; -0.26521942 -0.266666 … -0.053220958 -0.03487267; … ; 0.089247175 -0.119799696 … 0.016678434 -0.30953473; 0.22674197 -0.35704076 … -0.17217867 -0.042641018], Float32[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])</code></pre>
+</div>
+</div>
+<p>weights first dense layer</p>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>ps[ <span class="fl">1</span> ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>32×784 Matrix{Float32}:
+ -0.0807254   -0.0149348    -0.0513753   …   0.0261551    0.0836884
+ -0.00680306  -0.0386107     0.0152395       0.078802    -0.0203043
+  0.0593593    0.0750602    -0.0774184      -0.0545327   -0.0430066
+  0.0307279    0.0823956     0.0294808      -0.0431204    0.00613155
+  0.0482073   -0.0637673    -0.0302181       0.0439912    0.0356666
+ -0.0267347    0.0635905     0.0818157   …  -0.0746971    0.0786356
+  0.0739436   -0.0762317    -0.00781426      0.0667292   -0.0710559
+  0.0181307    0.0114753    -0.022601        0.0283188    0.0629513
+ -0.0720515   -0.00946477    0.0633977       0.0834549    0.013265
+ -0.0733012    0.0638312     0.020264        0.0522027    0.0758548
+ -0.0835535    0.0742496    -0.048824    …  -0.0355499    0.0184678
+ -0.0203554    0.0530421    -0.0800452      -0.0568624   -0.0615651
+ -0.0700626    0.0455175    -0.0573169       0.00236557  -0.0139366
+  ⋮                                      ⋱               
+  0.00649029  -0.021009     -0.0587737   …   0.0623865    0.0670012
+  0.0129691   -0.0436719    -0.0563321      -0.0596348    0.0698213
+  0.0249247    0.0540015    -0.0712353       0.0390815   -0.0289537
+ -0.0590616   -0.0629436    -0.0779405      -0.0314975   -0.0480547
+ -0.00906471   0.0459711     0.00977332      0.0567495   -0.0392772
+ -0.0783922    0.0772959     0.061113    …   0.0044441   -0.0493491
+ -0.0810718   -0.0400807     0.00471022     -0.0278676   -0.079753
+  0.0557132   -0.0690706    -0.0635564      -0.0773519    0.0472167
+ -0.0236739   -0.000171425  -0.0252993       0.0668071    0.0458846
+  0.0456806    0.0652578     0.00486481      0.0374103   -0.0178869
+  0.0662155    0.0294849    -0.0606151   …  -0.0725905    0.0159406
+ -0.0292166    0.0101531    -0.0572902      -0.0293375    0.0380323</code></pre>
+</div>
+</div>
+<p>biases</p>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>ps[ <span class="fl">2</span> ]</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">extrema</span>( ps[ <span class="fl">2</span> ] )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<pre><code>(0.0f0, 0.0f0)</code></pre>
+</div>
+</div>
+<p>weights second dense layer</p>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>ps[ <span class="fl">3</span> ] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<pre><code>10×32 Matrix{Float32}:
+ -0.229306   -0.286601   -0.113074    0.329291   …  -0.0657673    0.0068869
+ -0.265219   -0.266666    0.290328   -0.247208      -0.053221    -0.0348727
+  0.313981   -0.328515    0.21035    -0.286258       0.243084     0.345429
+  0.216774    0.0257979  -0.3612     -0.295116       0.00279375  -0.279115
+ -0.111265    0.0782929  -0.037463    0.015947       0.0645144   -0.130297
+ -0.279371    0.122471   -0.307376    0.254155   …  -0.335575    -0.209662
+  0.0812314  -0.165472    0.306412    0.28109       -0.234066     0.24417
+ -0.336674   -0.0397798  -0.0698594   0.0515134      0.279396     0.242268
+  0.0892472  -0.1198     -0.139247    0.178156       0.0166784   -0.309535
+  0.226742   -0.357041    0.33865     0.307865      -0.172179    -0.042641</code></pre>
+</div>
+</div>
+<p>second biases</p>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>ps[ <span class="fl">4</span> ]</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">extrema</span>( ps[ <span class="fl">4</span> ] )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>(0.0f0, 0.0f0)</code></pre>
+</div>
+</div>
+<p>select optimiser ( learning rate = 0.01 )</p>
+<div class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>opt <span class="op">=</span> <span class="fu">ADAM</span>( <span class="fl">0.01</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<pre><code>ADAM(0.01, (0.9, 0.999), 1.0e-8, IdDict{Any, Any}())</code></pre>
+</div>
+</div>
+<p>The data must be compatible for the model</p>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">size</span>( X_train ), <span class="fu">size</span>( Y_train )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<pre><code>((35687, 784), (10, 35687))</code></pre>
+</div>
+</div>
+<p>training and minimising loss with backpropagation</p>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>loss_history <span class="op">=</span> [ ]</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>epochs <span class="op">=</span> <span class="fl">500</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>epochs</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># train model</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    Flux.<span class="fu">train!</span>( loss, ps, [ ( X_train<span class="op">'</span>, Y_train ) ], opt )</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># print</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    train_loss <span class="op">=</span> <span class="fu">loss</span>( X_train<span class="op">'</span>, Y_train )</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">push!</span>( loss_history, train_loss )</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>( <span class="st">"Epoch = </span><span class="sc">$</span>epoch<span class="st"> : Training Loss = </span><span class="sc">$</span>train_loss<span class="st">"</span> )</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch = 1 : Training Loss = 10.890088
+Epoch = 2 : Training Loss = 11.134266
+Epoch = 3 : Training Loss = 9.525836
+Epoch = 4 : Training Loss = 9.005175
+Epoch = 5 : Training Loss = 8.8528595
+Epoch = 6 : Training Loss = 8.487713
+Epoch = 7 : Training Loss = 8.179647
+Epoch = 8 : Training Loss = 7.946466
+Epoch = 9 : Training Loss = 7.7815347
+Epoch = 10 : Training Loss = 7.6322575
+Epoch = 11 : Training Loss = 7.4463444
+Epoch = 12 : Training Loss = 7.2688293
+Epoch = 13 : Training Loss = 7.127876
+Epoch = 14 : Training Loss = 7.019822
+Epoch = 15 : Training Loss = 6.962233
+Epoch = 16 : Training Loss = 6.891544
+Epoch = 17 : Training Loss = 6.84449
+Epoch = 18 : Training Loss = 6.7903876
+Epoch = 19 : Training Loss = 6.7171288
+Epoch = 20 : Training Loss = 6.6495776
+Epoch = 21 : Training Loss = 6.479952
+Epoch = 22 : Training Loss = 6.026612
+Epoch = 23 : Training Loss = 5.833945
+Epoch = 24 : Training Loss = 5.6262393
+Epoch = 25 : Training Loss = 5.124595
+Epoch = 26 : Training Loss = 4.788385
+Epoch = 27 : Training Loss = 4.5600977
+Epoch = 28 : Training Loss = 4.3424883
+Epoch = 29 : Training Loss = 4.225161
+Epoch = 30 : Training Loss = 4.3809934
+Epoch = 31 : Training Loss = 4.4119077
+Epoch = 32 : Training Loss = 4.194424
+Epoch = 33 : Training Loss = 3.923766
+Epoch = 34 : Training Loss = 3.7157323
+Epoch = 35 : Training Loss = 3.57005
+Epoch = 36 : Training Loss = 3.5290663
+Epoch = 37 : Training Loss = 3.4770107
+Epoch = 38 : Training Loss = 3.412807
+Epoch = 39 : Training Loss = 3.3551598
+Epoch = 40 : Training Loss = 3.3048828
+Epoch = 41 : Training Loss = 3.235225
+Epoch = 42 : Training Loss = 3.138318
+Epoch = 43 : Training Loss = 3.0430923
+Epoch = 44 : Training Loss = 2.9913883
+Epoch = 45 : Training Loss = 2.9522884
+Epoch = 46 : Training Loss = 2.9222498
+Epoch = 47 : Training Loss = 2.8726256
+Epoch = 48 : Training Loss = 2.860886
+Epoch = 49 : Training Loss = 2.840306
+Epoch = 50 : Training Loss = 2.8023396
+Epoch = 51 : Training Loss = 2.7595124
+Epoch = 52 : Training Loss = 2.7154324
+Epoch = 53 : Training Loss = 2.6891818
+Epoch = 54 : Training Loss = 2.6666567
+Epoch = 55 : Training Loss = 2.6426363
+Epoch = 56 : Training Loss = 2.6268756
+Epoch = 57 : Training Loss = 2.596391
+Epoch = 58 : Training Loss = 2.5767267
+Epoch = 59 : Training Loss = 2.559284
+Epoch = 60 : Training Loss = 2.539677
+Epoch = 61 : Training Loss = 2.5218017
+Epoch = 62 : Training Loss = 2.5128124
+Epoch = 63 : Training Loss = 2.4938717
+Epoch = 64 : Training Loss = 2.4823315
+Epoch = 65 : Training Loss = 2.4644938
+Epoch = 66 : Training Loss = 2.4526076
+Epoch = 67 : Training Loss = 2.4416587
+Epoch = 68 : Training Loss = 2.427133
+Epoch = 69 : Training Loss = 2.4182537
+Epoch = 70 : Training Loss = 2.4105477
+Epoch = 71 : Training Loss = 2.3966725
+Epoch = 72 : Training Loss = 2.386555
+Epoch = 73 : Training Loss = 2.3811853
+Epoch = 74 : Training Loss = 2.3685577
+Epoch = 75 : Training Loss = 2.3616912
+Epoch = 76 : Training Loss = 2.3536024
+Epoch = 77 : Training Loss = 2.345963
+Epoch = 78 : Training Loss = 2.3390737
+Epoch = 79 : Training Loss = 2.3350875
+Epoch = 80 : Training Loss = 2.3281991
+Epoch = 81 : Training Loss = 2.3262537
+Epoch = 82 : Training Loss = 2.3176935
+Epoch = 83 : Training Loss = 2.3136246
+Epoch = 84 : Training Loss = 2.3091388
+Epoch = 85 : Training Loss = 2.3057008
+Epoch = 86 : Training Loss = 2.3013787
+Epoch = 87 : Training Loss = 2.297128
+Epoch = 88 : Training Loss = 2.2938707
+Epoch = 89 : Training Loss = 2.2892265
+Epoch = 90 : Training Loss = 2.2868595
+Epoch = 91 : Training Loss = 2.284167
+Epoch = 92 : Training Loss = 2.280898
+Epoch = 93 : Training Loss = 2.2803652
+Epoch = 94 : Training Loss = 2.2729084
+Epoch = 95 : Training Loss = 2.2725022
+Epoch = 96 : Training Loss = 2.2689726
+Epoch = 97 : Training Loss = 2.2672129
+Epoch = 98 : Training Loss = 2.26165
+Epoch = 99 : Training Loss = 2.2576578
+Epoch = 100 : Training Loss = 2.256172
+Epoch = 101 : Training Loss = 2.2522016
+Epoch = 102 : Training Loss = 2.250793
+Epoch = 103 : Training Loss = 2.247514
+Epoch = 104 : Training Loss = 2.2443528
+Epoch = 105 : Training Loss = 2.2405243
+Epoch = 106 : Training Loss = 2.2398667
+Epoch = 107 : Training Loss = 2.236811
+Epoch = 108 : Training Loss = 2.2344856
+Epoch = 109 : Training Loss = 2.2334409
+Epoch = 110 : Training Loss = 2.2300632
+Epoch = 111 : Training Loss = 2.227989
+Epoch = 112 : Training Loss = 2.2274976
+Epoch = 113 : Training Loss = 2.2257695
+Epoch = 114 : Training Loss = 2.2256017
+Epoch = 115 : Training Loss = 2.2224195
+Epoch = 116 : Training Loss = 2.221017
+Epoch = 117 : Training Loss = 2.218453
+Epoch = 118 : Training Loss = 2.216603
+Epoch = 119 : Training Loss = 2.213953
+Epoch = 120 : Training Loss = 2.212304
+Epoch = 121 : Training Loss = 2.2106845
+Epoch = 122 : Training Loss = 2.209206
+Epoch = 123 : Training Loss = 2.2068715
+Epoch = 124 : Training Loss = 2.20633
+Epoch = 125 : Training Loss = 2.2048461
+Epoch = 126 : Training Loss = 2.2032254
+Epoch = 127 : Training Loss = 2.2031612
+Epoch = 128 : Training Loss = 2.201536
+Epoch = 129 : Training Loss = 2.2000732
+Epoch = 130 : Training Loss = 2.1983814
+Epoch = 131 : Training Loss = 2.197503
+Epoch = 132 : Training Loss = 2.1956306
+Epoch = 133 : Training Loss = 2.1940565
+Epoch = 134 : Training Loss = 2.1918113
+Epoch = 135 : Training Loss = 2.1899204
+Epoch = 136 : Training Loss = 2.1902137
+Epoch = 137 : Training Loss = 2.188962
+Epoch = 138 : Training Loss = 2.1877544
+Epoch = 139 : Training Loss = 2.187021
+Epoch = 140 : Training Loss = 2.1854627
+Epoch = 141 : Training Loss = 2.1842213
+Epoch = 142 : Training Loss = 2.183591
+Epoch = 143 : Training Loss = 2.1835775
+Epoch = 144 : Training Loss = 2.1826155
+Epoch = 145 : Training Loss = 2.1823366
+Epoch = 146 : Training Loss = 2.1818373
+Epoch = 147 : Training Loss = 2.1815126
+Epoch = 148 : Training Loss = 2.1806362
+Epoch = 149 : Training Loss = 2.1784925
+Epoch = 150 : Training Loss = 2.1772413
+Epoch = 151 : Training Loss = 2.1770322
+Epoch = 152 : Training Loss = 2.1761346
+Epoch = 153 : Training Loss = 2.1751888
+Epoch = 154 : Training Loss = 2.1748796
+Epoch = 155 : Training Loss = 2.1733844
+Epoch = 156 : Training Loss = 2.1728969
+Epoch = 157 : Training Loss = 2.172921
+Epoch = 158 : Training Loss = 2.169915
+Epoch = 159 : Training Loss = 2.1686268
+Epoch = 160 : Training Loss = 2.1676571
+Epoch = 161 : Training Loss = 2.167255
+Epoch = 162 : Training Loss = 2.1666515
+Epoch = 163 : Training Loss = 2.1663518
+Epoch = 164 : Training Loss = 2.1662273
+Epoch = 165 : Training Loss = 2.1644814
+Epoch = 166 : Training Loss = 2.1634994
+Epoch = 167 : Training Loss = 2.1620996
+Epoch = 168 : Training Loss = 2.160732
+Epoch = 169 : Training Loss = 2.160281
+Epoch = 170 : Training Loss = 2.1604576
+Epoch = 171 : Training Loss = 2.1600974
+Epoch = 172 : Training Loss = 2.159083
+Epoch = 173 : Training Loss = 2.1583674
+Epoch = 174 : Training Loss = 2.1574562
+Epoch = 175 : Training Loss = 2.1571934
+Epoch = 176 : Training Loss = 2.1560693
+Epoch = 177 : Training Loss = 2.1556995
+Epoch = 178 : Training Loss = 2.155756
+Epoch = 179 : Training Loss = 2.1550198
+Epoch = 180 : Training Loss = 2.1549265
+Epoch = 181 : Training Loss = 2.1547208
+Epoch = 182 : Training Loss = 2.1543243
+Epoch = 183 : Training Loss = 2.1540093
+Epoch = 184 : Training Loss = 2.1537275
+Epoch = 185 : Training Loss = 2.1534057
+Epoch = 186 : Training Loss = 2.1530066
+Epoch = 187 : Training Loss = 2.1522937
+Epoch = 188 : Training Loss = 2.1520717
+Epoch = 189 : Training Loss = 2.1514444
+Epoch = 190 : Training Loss = 2.1511714
+Epoch = 191 : Training Loss = 2.150595
+Epoch = 192 : Training Loss = 2.150671
+Epoch = 193 : Training Loss = 2.1503575
+Epoch = 194 : Training Loss = 2.1502235
+Epoch = 195 : Training Loss = 2.1501293
+Epoch = 196 : Training Loss = 2.1500669
+Epoch = 197 : Training Loss = 2.1498926
+Epoch = 198 : Training Loss = 2.1493876
+Epoch = 199 : Training Loss = 2.1492274
+Epoch = 200 : Training Loss = 2.148433
+Epoch = 201 : Training Loss = 2.147685
+Epoch = 202 : Training Loss = 2.1476867
+Epoch = 203 : Training Loss = 2.1471596
+Epoch = 204 : Training Loss = 2.146806
+Epoch = 205 : Training Loss = 2.1468475
+Epoch = 206 : Training Loss = 2.1465485
+Epoch = 207 : Training Loss = 2.14616
+Epoch = 208 : Training Loss = 2.1465204
+Epoch = 209 : Training Loss = 2.144492
+Epoch = 210 : Training Loss = 2.1441908
+Epoch = 211 : Training Loss = 2.1424077
+Epoch = 212 : Training Loss = 2.1421032
+Epoch = 213 : Training Loss = 2.1414702
+Epoch = 214 : Training Loss = 2.1408377
+Epoch = 215 : Training Loss = 2.138705
+Epoch = 216 : Training Loss = 2.1383688
+Epoch = 217 : Training Loss = 2.1363316
+Epoch = 218 : Training Loss = 2.1366515
+Epoch = 219 : Training Loss = 2.1362615
+Epoch = 220 : Training Loss = 2.1355734
+Epoch = 221 : Training Loss = 2.134211
+Epoch = 222 : Training Loss = 2.1322594
+Epoch = 223 : Training Loss = 2.1314278
+Epoch = 224 : Training Loss = 2.1307175
+Epoch = 225 : Training Loss = 2.1299117
+Epoch = 226 : Training Loss = 2.129932
+Epoch = 227 : Training Loss = 2.129237
+Epoch = 228 : Training Loss = 2.1286006
+Epoch = 229 : Training Loss = 2.127288
+Epoch = 230 : Training Loss = 2.1271496
+Epoch = 231 : Training Loss = 2.126187
+Epoch = 232 : Training Loss = 2.1262257
+Epoch = 233 : Training Loss = 2.123455
+Epoch = 234 : Training Loss = 2.1241336
+Epoch = 235 : Training Loss = 2.1244686
+Epoch = 236 : Training Loss = 2.1235037
+Epoch = 237 : Training Loss = 2.1217952
+Epoch = 238 : Training Loss = 2.119758
+Epoch = 239 : Training Loss = 2.1184788
+Epoch = 240 : Training Loss = 2.119559
+Epoch = 241 : Training Loss = 2.120789
+Epoch = 242 : Training Loss = 2.1162932
+Epoch = 243 : Training Loss = 2.120006
+Epoch = 244 : Training Loss = 2.1199212
+Epoch = 245 : Training Loss = 2.1234472
+Epoch = 246 : Training Loss = 2.118311
+Epoch = 247 : Training Loss = 2.125081
+Epoch = 248 : Training Loss = 2.1198428
+Epoch = 249 : Training Loss = 2.1208858
+Epoch = 250 : Training Loss = 2.1244152
+Epoch = 251 : Training Loss = 2.1137762
+Epoch = 252 : Training Loss = 2.1128511
+Epoch = 253 : Training Loss = 2.1132648
+Epoch = 254 : Training Loss = 2.1108127
+Epoch = 255 : Training Loss = 2.1100016
+Epoch = 256 : Training Loss = 2.1097686
+Epoch = 257 : Training Loss = 2.1049223
+Epoch = 258 : Training Loss = 2.1012073
+Epoch = 259 : Training Loss = 2.1018004
+Epoch = 260 : Training Loss = 2.0980453
+Epoch = 261 : Training Loss = 2.1001754</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch = 262 : Training Loss = 2.097348
+Epoch = 263 : Training Loss = 2.0958161
+Epoch = 264 : Training Loss = 2.095317
+Epoch = 265 : Training Loss = 2.0940566
+Epoch = 266 : Training Loss = 2.0926208
+Epoch = 267 : Training Loss = 2.0913405
+Epoch = 268 : Training Loss = 2.090256
+Epoch = 269 : Training Loss = 2.0894542
+Epoch = 270 : Training Loss = 2.0892575
+Epoch = 271 : Training Loss = 2.089601
+Epoch = 272 : Training Loss = 2.0884256
+Epoch = 273 : Training Loss = 2.0878253
+Epoch = 274 : Training Loss = 2.0886443
+Epoch = 275 : Training Loss = 2.0873787
+Epoch = 276 : Training Loss = 2.086289
+Epoch = 277 : Training Loss = 2.0857399
+Epoch = 278 : Training Loss = 2.0855944
+Epoch = 279 : Training Loss = 2.0838654
+Epoch = 280 : Training Loss = 2.0830603
+Epoch = 281 : Training Loss = 2.0825405
+Epoch = 282 : Training Loss = 2.0824254
+Epoch = 283 : Training Loss = 2.0820518
+Epoch = 284 : Training Loss = 2.081448
+Epoch = 285 : Training Loss = 2.0811214
+Epoch = 286 : Training Loss = 2.0809553
+Epoch = 287 : Training Loss = 2.0806823
+Epoch = 288 : Training Loss = 2.0803638
+Epoch = 289 : Training Loss = 2.0797226
+Epoch = 290 : Training Loss = 2.0800169
+Epoch = 291 : Training Loss = 2.079751
+Epoch = 292 : Training Loss = 2.0793254
+Epoch = 293 : Training Loss = 2.0798962
+Epoch = 294 : Training Loss = 2.079207
+Epoch = 295 : Training Loss = 2.079495
+Epoch = 296 : Training Loss = 2.0788326
+Epoch = 297 : Training Loss = 2.0785208
+Epoch = 298 : Training Loss = 2.0778322
+Epoch = 299 : Training Loss = 2.0769396
+Epoch = 300 : Training Loss = 2.0769532
+Epoch = 301 : Training Loss = 2.0768347
+Epoch = 302 : Training Loss = 2.0763302
+Epoch = 303 : Training Loss = 2.0761025
+Epoch = 304 : Training Loss = 2.0757256
+Epoch = 305 : Training Loss = 2.0755227
+Epoch = 306 : Training Loss = 2.0757895
+Epoch = 307 : Training Loss = 2.075641
+Epoch = 308 : Training Loss = 2.0752866
+Epoch = 309 : Training Loss = 2.075276
+Epoch = 310 : Training Loss = 2.0751631
+Epoch = 311 : Training Loss = 2.0751364
+Epoch = 312 : Training Loss = 2.0748155
+Epoch = 313 : Training Loss = 2.0749774
+Epoch = 314 : Training Loss = 2.0746255
+Epoch = 315 : Training Loss = 2.0746417
+Epoch = 316 : Training Loss = 2.0745869
+Epoch = 317 : Training Loss = 2.0744033
+Epoch = 318 : Training Loss = 2.074169
+Epoch = 319 : Training Loss = 2.07417
+Epoch = 320 : Training Loss = 2.0741599
+Epoch = 321 : Training Loss = 2.074087
+Epoch = 322 : Training Loss = 2.07373
+Epoch = 323 : Training Loss = 2.0737507
+Epoch = 324 : Training Loss = 2.0737066
+Epoch = 325 : Training Loss = 2.0736184
+Epoch = 326 : Training Loss = 2.0732844
+Epoch = 327 : Training Loss = 2.073342
+Epoch = 328 : Training Loss = 2.0731142
+Epoch = 329 : Training Loss = 2.072823
+Epoch = 330 : Training Loss = 2.0728397
+Epoch = 331 : Training Loss = 2.0728235
+Epoch = 332 : Training Loss = 2.0730803
+Epoch = 333 : Training Loss = 2.0728207
+Epoch = 334 : Training Loss = 2.0729594
+Epoch = 335 : Training Loss = 2.0728397
+Epoch = 336 : Training Loss = 2.0728493
+Epoch = 337 : Training Loss = 2.0728097
+Epoch = 338 : Training Loss = 2.0726094
+Epoch = 339 : Training Loss = 2.0727332
+Epoch = 340 : Training Loss = 2.0723763
+Epoch = 341 : Training Loss = 2.0723782
+Epoch = 342 : Training Loss = 2.0723803
+Epoch = 343 : Training Loss = 2.072381
+Epoch = 344 : Training Loss = 2.0723865
+Epoch = 345 : Training Loss = 2.0723743
+Epoch = 346 : Training Loss = 2.0723727
+Epoch = 347 : Training Loss = 2.0723722
+Epoch = 348 : Training Loss = 2.072372
+Epoch = 349 : Training Loss = 2.072372
+Epoch = 350 : Training Loss = 2.072372
+Epoch = 351 : Training Loss = 2.072372
+Epoch = 352 : Training Loss = 2.072372
+Epoch = 353 : Training Loss = 2.072372
+Epoch = 354 : Training Loss = 2.072372
+Epoch = 355 : Training Loss = 2.0723712
+Epoch = 356 : Training Loss = 2.0723658
+Epoch = 357 : Training Loss = 2.0721884
+Epoch = 358 : Training Loss = 2.0721712
+Epoch = 359 : Training Loss = 2.0719252
+Epoch = 360 : Training Loss = 2.071922
+Epoch = 361 : Training Loss = 2.0717623
+Epoch = 362 : Training Loss = 2.0715423
+Epoch = 363 : Training Loss = 2.0714831
+Epoch = 364 : Training Loss = 2.0714884
+Epoch = 365 : Training Loss = 2.0714245
+Epoch = 366 : Training Loss = 2.0713
+Epoch = 367 : Training Loss = 2.0711231
+Epoch = 368 : Training Loss = 2.0710754
+Epoch = 369 : Training Loss = 2.0706003
+Epoch = 370 : Training Loss = 2.0702188
+Epoch = 371 : Training Loss = 2.0697904
+Epoch = 372 : Training Loss = 2.0695262
+Epoch = 373 : Training Loss = 2.0686014
+Epoch = 374 : Training Loss = 2.0688515
+Epoch = 375 : Training Loss = 2.0679886
+Epoch = 376 : Training Loss = 2.0672045
+Epoch = 377 : Training Loss = 2.0672657
+Epoch = 378 : Training Loss = 2.0667667
+Epoch = 379 : Training Loss = 2.0658648
+Epoch = 380 : Training Loss = 2.0667152
+Epoch = 381 : Training Loss = 2.065075
+Epoch = 382 : Training Loss = 2.0652263
+Epoch = 383 : Training Loss = 2.0653973
+Epoch = 384 : Training Loss = 2.064696
+Epoch = 385 : Training Loss = 2.0651045
+Epoch = 386 : Training Loss = 2.063823
+Epoch = 387 : Training Loss = 2.0632894
+Epoch = 388 : Training Loss = 2.0634198
+Epoch = 389 : Training Loss = 2.0625715
+Epoch = 390 : Training Loss = 2.0622044
+Epoch = 391 : Training Loss = 2.0621004
+Epoch = 392 : Training Loss = 2.062052
+Epoch = 393 : Training Loss = 2.0619452
+Epoch = 394 : Training Loss = 2.0632102
+Epoch = 395 : Training Loss = 2.061843
+Epoch = 396 : Training Loss = 2.0628273
+Epoch = 397 : Training Loss = 2.0623224
+Epoch = 398 : Training Loss = 2.0620363
+Epoch = 399 : Training Loss = 2.0620995
+Epoch = 400 : Training Loss = 2.061262
+Epoch = 401 : Training Loss = 2.0605307
+Epoch = 402 : Training Loss = 2.0603924
+Epoch = 403 : Training Loss = 2.0596285
+Epoch = 404 : Training Loss = 2.0596654
+Epoch = 405 : Training Loss = 2.0594587
+Epoch = 406 : Training Loss = 2.059861
+Epoch = 407 : Training Loss = 2.0589018
+Epoch = 408 : Training Loss = 2.0589027
+Epoch = 409 : Training Loss = 2.0581307
+Epoch = 410 : Training Loss = 2.05835
+Epoch = 411 : Training Loss = 2.0570347
+Epoch = 412 : Training Loss = 2.0559735
+Epoch = 413 : Training Loss = 2.0548546
+Epoch = 414 : Training Loss = 2.0542436
+Epoch = 415 : Training Loss = 2.0537245
+Epoch = 416 : Training Loss = 2.05279
+Epoch = 417 : Training Loss = 2.0529332
+Epoch = 418 : Training Loss = 2.0513864
+Epoch = 419 : Training Loss = 2.0516596
+Epoch = 420 : Training Loss = 2.0513003
+Epoch = 421 : Training Loss = 2.0510397
+Epoch = 422 : Training Loss = 2.050808
+Epoch = 423 : Training Loss = 2.050355
+Epoch = 424 : Training Loss = 2.0500994
+Epoch = 425 : Training Loss = 2.0499103
+Epoch = 426 : Training Loss = 2.0491285
+Epoch = 427 : Training Loss = 2.0486615
+Epoch = 428 : Training Loss = 2.048335
+Epoch = 429 : Training Loss = 2.0481236
+Epoch = 430 : Training Loss = 2.0479977
+Epoch = 431 : Training Loss = 2.047656
+Epoch = 432 : Training Loss = 2.0473828
+Epoch = 433 : Training Loss = 2.0466752
+Epoch = 434 : Training Loss = 2.046487
+Epoch = 435 : Training Loss = 2.0464807
+Epoch = 436 : Training Loss = 2.0464406
+Epoch = 437 : Training Loss = 2.045946
+Epoch = 438 : Training Loss = 2.0456717
+Epoch = 439 : Training Loss = 2.0451326
+Epoch = 440 : Training Loss = 2.04527
+Epoch = 441 : Training Loss = 2.044768
+Epoch = 442 : Training Loss = 2.044689
+Epoch = 443 : Training Loss = 2.0442576
+Epoch = 444 : Training Loss = 2.0437896
+Epoch = 445 : Training Loss = 2.0446973
+Epoch = 446 : Training Loss = 2.0437284
+Epoch = 447 : Training Loss = 2.0441751
+Epoch = 448 : Training Loss = 2.0433607
+Epoch = 449 : Training Loss = 2.0428984
+Epoch = 450 : Training Loss = 2.0424633
+Epoch = 451 : Training Loss = 2.0421457
+Epoch = 452 : Training Loss = 2.0417333
+Epoch = 453 : Training Loss = 2.0403876
+Epoch = 454 : Training Loss = 2.0412035
+Epoch = 455 : Training Loss = 2.0423853
+Epoch = 456 : Training Loss = 2.039619
+Epoch = 457 : Training Loss = 2.0399306
+Epoch = 458 : Training Loss = 2.0380216
+Epoch = 459 : Training Loss = 2.038941
+Epoch = 460 : Training Loss = 2.0391972
+Epoch = 461 : Training Loss = 2.0390012
+Epoch = 462 : Training Loss = 2.038079
+Epoch = 463 : Training Loss = 2.036391
+Epoch = 464 : Training Loss = 2.04237
+Epoch = 465 : Training Loss = 2.037712
+Epoch = 466 : Training Loss = 2.0387712
+Epoch = 467 : Training Loss = 2.0367491
+Epoch = 468 : Training Loss = 2.0352116
+Epoch = 469 : Training Loss = 2.033632
+Epoch = 470 : Training Loss = 2.0344946
+Epoch = 471 : Training Loss = 2.032795
+Epoch = 472 : Training Loss = 2.0343876
+Epoch = 473 : Training Loss = 2.0344994
+Epoch = 474 : Training Loss = 2.0331986
+Epoch = 475 : Training Loss = 2.0338774
+Epoch = 476 : Training Loss = 2.0317543
+Epoch = 477 : Training Loss = 2.0311456
+Epoch = 478 : Training Loss = 2.0319185
+Epoch = 479 : Training Loss = 2.0316145
+Epoch = 480 : Training Loss = 2.0305076
+Epoch = 481 : Training Loss = 2.0295727
+Epoch = 482 : Training Loss = 2.0314527
+Epoch = 483 : Training Loss = 2.0307553
+Epoch = 484 : Training Loss = 2.0308664
+Epoch = 485 : Training Loss = 2.0301573
+Epoch = 486 : Training Loss = 2.030564
+Epoch = 487 : Training Loss = 2.0305
+Epoch = 488 : Training Loss = 2.0278533
+Epoch = 489 : Training Loss = 2.027407
+Epoch = 490 : Training Loss = 2.0261981
+Epoch = 491 : Training Loss = 2.0258696
+Epoch = 492 : Training Loss = 2.0266104
+Epoch = 493 : Training Loss = 2.025636
+Epoch = 494 : Training Loss = 2.0260458
+Epoch = 495 : Training Loss = 2.026207
+Epoch = 496 : Training Loss = 2.0252495
+Epoch = 497 : Training Loss = 2.0250092
+Epoch = 498 : Training Loss = 2.0253398
+Epoch = 499 : Training Loss = 2.0256333
+Epoch = 500 : Training Loss = 2.0246465</code></pre>
+</div>
+</div>
+<p>Obs.: epochs indicates the number of passes of the entire training dataset the machine learning algorithm has completed.</p>
+</section>
+<section id="predictions-with-validation-data" class="level1">
+<h1>Predictions (with validation data)</h1>
+<div class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>y_hat <span class="op">=</span> <span class="fu">model</span>( X_test<span class="op">'</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="24">
+<pre><code>10×6313 Matrix{Float32}:
+ 0.0  0.0  0.0  0.0  0.0  0.0          …  0.0  0.0  1.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  0.0  0.0             0.0  1.0  0.0  0.0  1.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  0.0  0.0             0.0  0.0  0.0  0.0  0.0  1.0  0.0
+ 0.0  0.0  0.0  0.0  0.0  0.0             0.0  0.0  0.0  1.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  0.0  0.0             0.0  0.0  0.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  0.0  0.0          …  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  0.0  4.15825f-32     1.0  0.0  0.0  0.0  0.0  0.0  0.0
+ 1.0  0.0  0.0  0.0  0.0  0.0             0.0  0.0  0.0  0.0  0.0  0.0  0.0
+ 0.0  1.0  0.0  0.0  0.0  0.0             0.0  0.0  0.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  1.0  1.0  1.0  1.0             0.0  0.0  0.0  0.0  0.0  0.0  1.0</code></pre>
+</div>
+</div>
+<p><code>onecold</code> takes the highest value and turn into his index (it starts by 1) and we’ve got 0:9 digits.</p>
+<div class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>y_hat <span class="op">=</span> <span class="fu">onecold</span>( y_hat ) <span class="op">.-</span> <span class="fl">1</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="fu">onecold</span>( Y_test ) <span class="op">.-</span> <span class="fl">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<pre><code>6313-element Vector{Int64}:
+ 7
+ 8
+ 4
+ 9
+ 4
+ 4
+ 4
+ 2
+ 6
+ 3
+ 0
+ 8
+ 2
+ ⋮
+ 1
+ 4
+ 5
+ 6
+ 8
+ 6
+ 1
+ 0
+ 3
+ 1
+ 2
+ 4</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># accuracy</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>( y_hat <span class="op">.==</span> y )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
+<pre><code>0.8534769523206083</code></pre>
+</div>
+</div>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<p>display results</p>
+<div class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>check <span class="op">=</span> [ y_hat[ i ] <span class="op">==</span> y[ i ] for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">length</span>( y ) ]</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>index <span class="op">=</span> <span class="fu">collect</span>( <span class="fl">1</span><span class="op">:</span><span class="fu">length</span>( y ) )</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>check_display <span class="op">=</span> [ index y_hat y check ]</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>check_display <span class="op">=</span> <span class="fu">DataFrame</span>( <span class="fu">Matrix</span>(check_display),</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>                          [<span class="st">"index"</span>, <span class="st">"predictions"</span>, <span class="st">"actual labels"</span>, <span class="st">"logical classification"</span>] )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="27">
+
+<div class="data-frame"><p>6,313 rows × 4 columns</p><table class="data-frame table table-sm table-striped"><thead><tr><th></th><th>index</th><th>predictions</th><th>actual labels</th><th>logical classification</th></tr><tr><th></th><th title="Int64">Int64</th><th title="Int64">Int64</th><th title="Int64">Int64</th><th title="Int64">Int64</th></tr></thead><tbody><tr><th>1</th><td>1</td><td>7</td><td>7</td><td>1</td></tr><tr><th>2</th><td>2</td><td>8</td><td>8</td><td>1</td></tr><tr><th>3</th><td>3</td><td>9</td><td>4</td><td>0</td></tr><tr><th>4</th><td>4</td><td>9</td><td>9</td><td>1</td></tr><tr><th>5</th><td>5</td><td>9</td><td>4</td><td>0</td></tr><tr><th>6</th><td>6</td><td>9</td><td>4</td><td>0</td></tr><tr><th>7</th><td>7</td><td>9</td><td>4</td><td>0</td></tr><tr><th>8</th><td>8</td><td>2</td><td>2</td><td>1</td></tr><tr><th>9</th><td>9</td><td>6</td><td>6</td><td>1</td></tr><tr><th>10</th><td>10</td><td>3</td><td>3</td><td>1</td></tr><tr><th>11</th><td>11</td><td>0</td><td>0</td><td>1</td></tr><tr><th>12</th><td>12</td><td>8</td><td>8</td><td>1</td></tr><tr><th>13</th><td>13</td><td>2</td><td>2</td><td>1</td></tr><tr><th>14</th><td>14</td><td>6</td><td>6</td><td>1</td></tr><tr><th>15</th><td>15</td><td>1</td><td>1</td><td>1</td></tr><tr><th>16</th><td>16</td><td>7</td><td>7</td><td>1</td></tr><tr><th>17</th><td>17</td><td>5</td><td>5</td><td>1</td></tr><tr><th>18</th><td>18</td><td>3</td><td>3</td><td>1</td></tr><tr><th>19</th><td>19</td><td>5</td><td>5</td><td>1</td></tr><tr><th>20</th><td>20</td><td>0</td><td>0</td><td>1</td></tr><tr><th>21</th><td>21</td><td>3</td><td>3</td><td>1</td></tr><tr><th>22</th><td>22</td><td>9</td><td>9</td><td>1</td></tr><tr><th>23</th><td>23</td><td>8</td><td>8</td><td>1</td></tr><tr><th>24</th><td>24</td><td>5</td><td>5</td><td>1</td></tr><tr><th>25</th><td>25</td><td>8</td><td>8</td><td>1</td></tr><tr><th>26</th><td>26</td><td>1</td><td>1</td><td>1</td></tr><tr><th>27</th><td>27</td><td>7</td><td>3</td><td>0</td></tr><tr><th>28</th><td>28</td><td>6</td><td>6</td><td>1</td></tr><tr><th>29</th><td>29</td><td>0</td><td>0</td><td>1</td></tr><tr><th>30</th><td>30</td><td>2</td><td>4</td><td>0</td></tr><tr><th>⋮</th><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr></tbody></table></div>
+</div>
+</div>
+<p>number of correct classifications</p>
+<div class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">size</span>( check_display )[ <span class="fl">1</span> ] <span class="op">-</span> <span class="fu">count</span>( x <span class="op">-&gt;</span> x <span class="op">==</span> <span class="fl">0</span>, check_display.<span class="st">"logical classification"</span> ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="28">
+<pre><code>5388</code></pre>
+</div>
+</div>
+<p>view misclassifications</p>
+<div class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>misclass_index <span class="op">=</span> <span class="fl">3</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> X_test[ misclass_index, <span class="op">:</span> ] <span class="op">/</span> <span class="fl">255</span> </span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> <span class="fu">reshape</span>( img, <span class="fl">28</span>, <span class="fl">28</span> )</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="fu">Gray</span>.( img<span class="op">'</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="29">
+<p><img src="ann_backpropagation_files/figure-html/cell-29-output-1.svg" class="img-fluid"></p>
+</div>
+</div>
+<p>labeled as …</p>
+<div class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>y[ misclass_index ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="30">
+<pre><code>4</code></pre>
+</div>
+</div>
+<p>classified as …</p>
+<div class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>y_hat[ misclass_index ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="31">
+<pre><code>9</code></pre>
+</div>
+</div>
+<p>initialize plot</p>
+<div class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gr</span>( size <span class="op">=</span> ( <span class="fl">600</span>, <span class="fl">600</span> ) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="32">
+<pre><code>Plots.GRBackend()</code></pre>
+</div>
+</div>
+<p>plot learning curve</p>
+<div class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>p_l_curve <span class="op">=</span> Plots.<span class="fu">plot</span>( <span class="fl">1</span><span class="op">:</span>epochs, loss_history,</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>    xlabel <span class="op">=</span> <span class="st">"Epochs"</span>,</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>    ylabel <span class="op">=</span> <span class="st">"Loss"</span>,</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>    title <span class="op">=</span> <span class="st">"Learning Curve"</span>,</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>    legend <span class="op">=</span> <span class="cn">false</span>,</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> <span class="op">:</span>blue,</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>    linewidth <span class="op">=</span> <span class="fl">2</span></span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="33">
+<p><img src="ann_backpropagation_files/figure-html/cell-33-output-1.svg" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="final-prediction" class="level2">
+<h2 class="anchored" data-anchor-id="final-prediction">Final prediction</h2>
+<div class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>y_final <span class="op">=</span> <span class="fu">model</span>( (test <span class="op">|&gt;</span> <span class="dt">Matrix</span>)<span class="ch">' )</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>final_prediction <span class="op">=</span> <span class="fu">DataFrame</span>( ImageID <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">28000</span>, Label <span class="op">=</span> <span class="fu">onecold</span>( y_final ) <span class="op">.-</span> <span class="fl">1</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="34">
+
+<div class="data-frame"><p>28,000 rows × 2 columns</p><table class="data-frame table table-sm table-striped"><thead><tr><th></th><th>ImageID</th><th>Label</th></tr><tr><th></th><th title="Int64">Int64</th><th title="Int64">Int64</th></tr></thead><tbody><tr><th>1</th><td>1</td><td>2</td></tr><tr><th>2</th><td>2</td><td>0</td></tr><tr><th>3</th><td>3</td><td>8</td></tr><tr><th>4</th><td>4</td><td>7</td></tr><tr><th>5</th><td>5</td><td>3</td></tr><tr><th>6</th><td>6</td><td>7</td></tr><tr><th>7</th><td>7</td><td>0</td></tr><tr><th>8</th><td>8</td><td>3</td></tr><tr><th>9</th><td>9</td><td>0</td></tr><tr><th>10</th><td>10</td><td>3</td></tr><tr><th>11</th><td>11</td><td>5</td></tr><tr><th>12</th><td>12</td><td>7</td></tr><tr><th>13</th><td>13</td><td>9</td></tr><tr><th>14</th><td>14</td><td>0</td></tr><tr><th>15</th><td>15</td><td>9</td></tr><tr><th>16</th><td>16</td><td>5</td></tr><tr><th>17</th><td>17</td><td>3</td></tr><tr><th>18</th><td>18</td><td>1</td></tr><tr><th>19</th><td>19</td><td>9</td></tr><tr><th>20</th><td>20</td><td>0</td></tr><tr><th>21</th><td>21</td><td>9</td></tr><tr><th>22</th><td>22</td><td>1</td></tr><tr><th>23</th><td>23</td><td>1</td></tr><tr><th>24</th><td>24</td><td>5</td></tr><tr><th>25</th><td>25</td><td>7</td></tr><tr><th>26</th><td>26</td><td>9</td></tr><tr><th>27</th><td>27</td><td>2</td></tr><tr><th>28</th><td>28</td><td>7</td></tr><tr><th>29</th><td>29</td><td>9</td></tr><tr><th>30</th><td>30</td><td>7</td></tr><tr><th>⋮</th><td>⋮</td><td>⋮</td></tr></tbody></table></div>
+</div>
+</div>
+<p>saving file</p>
+<div class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>CSV.<span class="fu">write</span>( <span class="st">"submission_julia.csv"</span>, final_prediction )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="35">
+<pre><code>"submission_julia.csv"</code></pre>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
